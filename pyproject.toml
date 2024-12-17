@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "ragtest"
+version = "0.1.0"
+description = ""
+authors = ["vmm <jaymattila@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.13"
+langchain = "^0.3.7"
+langchain-openai = "^0.2.9"
+langchain-community = "^0.3.7"
+langchainhub = "^0.1.21"
+python-dotenv = "^1.0.1"
+langchain-anthropic = "^0.3.0"
+langchain-ollama = "^0.2.0"
+langchain-pinecone = "^0.2.0"
+pypdf = "^5.1.0"
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.3.1"
+black = "^24.10.0"
+
+[tool.pylint.messages_control]
+disable = [
+    "C0111",  # missing-docstring
+    "C0103",  # invalid-name
+    "C0114",  # missing-module-docstring
+    "C0115",  # missing-class-docstring
+    "C0116",  # missing-function-docstring
+]
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.black]
+line-length = 100
+target-version = ['py312']
+include = '\.pyi?$'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
