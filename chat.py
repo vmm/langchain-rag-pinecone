@@ -11,8 +11,11 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.schema.language_model import BaseLanguageModel
 from ingestion import validate_environment
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_community.chat_models import ChatOllama
 
-ModelChoice = Literal["openai", "claude"]
+# Update the ModelChoice type
+ModelChoice = Literal["openai", "claude", "gemini", "ollama"]
 
 def signal_handler(_, __):
     """Handle graceful exit on CTRL+C."""
@@ -25,25 +28,42 @@ def select_model() -> ModelChoice:
         print("\nAvailable models:")
         print("1. OpenAI GPT")
         print("2. Anthropic Claude")
-        choice = input("\nSelect a model (1 or 2): ").strip()
+        print("3. Google Gemini")
+        print("4. Ollama (Local)") # Add new option
+        choice = input("\nSelect a model (1, 2, 3, or 4): ").strip()
 
         if choice == "1":
             return "openai"
         elif choice == "2":
             return "claude"
+        elif choice == "3":
+            return "gemini"
+        elif choice == "4":
+            return "ollama"
         else:
-            print("Invalid choice. Please select 1 or 2.")
+            print("Invalid choice. Please select 1, 2, 3, or 4.")
 
 def get_language_model(model_choice: ModelChoice) -> BaseLanguageModel:
     """Initialize the selected language model."""
     if model_choice == "openai":
         return ChatOpenAI()
-    else:  # claude
+    elif model_choice == "claude":
         return ChatAnthropic(
             model_name="claude-3-sonnet-20240229",
             temperature=0.7,
             timeout=120,
             stop=["Human:", "Assistant:"]
+        )
+    elif model_choice == "gemini":
+        return ChatGoogleGenerativeAI(
+            model="gemini-pro",
+            temperature=0.7,
+            convert_system_message_to_human=True
+        )
+    else:
+        return ChatOllama(
+            model="llama3",
+            temperature=0.7
         )
 
 def setup_chain(model_choice: ModelChoice):
